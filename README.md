@@ -1,5 +1,5 @@
 # Information Theory Measures
-This is a repo for exploring measures common to information theory.
+This is a repo for exploring measures common to information theory and preparation for a presentation required by SSIE 500 - Copmutational Tools
 
 A potential outline for a presentation and paper.
 
@@ -23,9 +23,9 @@ A potential outline for a presentation and paper.
   - 8. Kaggle Example: Conditional Entropy 
   - 9. Patrick's Python output
   - 10. (Traditional) Logistic Regression:
-  - 11 Significant Features
+  -- 11 Significant Features as indicated by GLM summary
 
 # Conclusion:
-  - 12.  Information Theory is a complimentary approach to feature selection
+  - 12.  Information Theory a complimentary approach to feature selection
 
 
