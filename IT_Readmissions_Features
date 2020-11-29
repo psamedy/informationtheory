@@ -1,0 +1,117 @@
+# Load the Pandas libraries with alias 'pd' 
+import pandas as pd 
+import scipy.stats as st
+from scipy.stats import entropy
+from scipy.stats import rv_continuous
+from scipy.stats import norm
+from scipy.stats import uniform
+from scipy import histogram, digitize, stats, mean, std
+import numpy as np
+from math import log
+import matplotlib.pyplot as plt
+log2= lambda x:log(x,2)
+from collections import defaultdict
+import statsmodels.api as sm
+from pyitlib import discrete_random_variable as drv
+
+
+# Read data from file 'filename.csv' 
+# (in the same directory that your python process is based)
+# Control delimiters, rows, column names with read_csv (see later) 
+data = pd.read_csv("train.csv") 
+
+'''
+Exploratory Analysis of Data Set
+PRINT MARGINAL DISTRIBUTIONS
+#print(pd.crosstab(index = [data['readmitted']], columns=[data['insulin_No']], normalize = 'index', margins = True))
+#c = data['examide_No'].apply(lambda x: 0 if x ==False else 1).values
+#d = data['readmitted'].apply(lambda x: 0 if x =='0' else 1).values
+#confusion_matrix = pd.crosstab(c,d)
+#print(confusion_matrix)
+'''
+
+#Use for traditional measures of importance
+def cramers_v(x, y):
+    confusion_matrix = pd.crosstab(x,y)
+    chi2 = st.chi2_contingency(confusion_matrix)[0]
+    n = confusion_matrix.sum().sum()
+    phi2 = chi2/n
+    r,k = confusion_matrix.shape
+    phi2corr = max(0, phi2-((k-1)*(r-1))/(n-1))
+    rcorr = r-((r-1)**2)/(n-1)
+    kcorr = k-((k-1)**2)/(n-1)
+    return np.sqrt(phi2corr/min((kcorr-1),(rcorr-1)))
+
+#create dataframe to store  Information Theory Measure for visualization
+metrics = pd.DataFrame(columns=['Feature', 'Conditional_Entropy', 'Self_Entropy', 'Mutual Information','Statistic' ])
+
+
+#loop through each column to compute IT measure and report in metrics dataframe
+for y in data.columns:
+	#compute relevant information theory metrics for discrete variables.
+	if(data[y].dtype == bool):
+		data[y] = data[y].apply(lambda x: 0 if x == False else 1)
+		num = sum(data[y])
+		denom = len(data[y]) 
+		x1=drv.entropy_conditional(data[y].values, data['readmitted'].apply(lambda x: 0 if x =='0' else 1).values)
+		x2 = entropy([num/denom, 1-(num/denom)], base=2)
+		x3 =cramers_v(data['readmitted'].values, data[y].values)
+		x4 = drv.information_mutual(data['readmitted'].values, data[y].values)
+		metrics=metrics.append({'Feature': y, 'Conditional_Entropy' : x1, 'Self_Entropy' : x2, 'Statistic' : x3, 'Mutual Information': x4} , ignore_index=True) 
+
+
+	#compute relevant information theory metrics for continous variables 
+	elif (data[y].dtype == 'int64'):
+		avg = np.mean(data[y])
+		devs = np.std(data[y])
+		dist = norm(avg, devs)
+		x1 = drv.entropy_conditional(data['readmitted'].values, data[y].values)
+		x2 = dist.entropy() 
+		x4 = drv.information_mutual(data['readmitted'].values, data[y].values)
+		metrics=metrics.append({'Feature': y, 'Conditional_Entropy' :x1, 'Self_Entropy' : x2, 'Mutual Information': x4} , ignore_index=True)
+
+#clean-up datatypes for plotting
+metrics["Conditional_Entropy"] = metrics.Conditional_Entropy.astype(float)
+metrics["Feature"] = metrics.Feature.astype(str)
+
+#apply feature with high conditiona entropy to model 
+model = sm.GLM.from_formula("readmitted ~ number_inpatient + insulin_No+ gender_Female+ change_No + num_procedures + miglitol_No", family = sm.families.Binomial(), data=data)
+result = model.fit()
+print(result.summary())
+
+#plot conditional entropy for each feature
+metrics.sort_values(by=['Conditional_Entropy'], inplace=True, ascending=True)
+ax = metrics.plot(x="Feature", y="Conditional_Entropy", kind= "barh")
+ax.set_title("Readmission: Conditional Entropy of Candidate Features")
+ax.set_xlabel("Contitional Entropy (Bits)")
+ax.set_ylabel("Feature")
+#plt.xlabel('xlabel', fontsize=8)
+plt.ylabel('xlabel', fontsize=4)
+plt.show()
+
+#plot mutual information of 
+metrics.sort_values(by=['Mutual Information'], inplace=True, ascending=True)
+ax2 = metrics.plot(x="Feature", y="Mutual Information", kind= "barh")
+ax2.set_title("Readmission: Conditional Entropy of Candidate Features")
+ax2.set_xlabel("Mutual Information (Bits)")
+ax2.set_ylabel("Feature")
+plt.ylabel('xlabel', fontsize=4)
+plt.show(block=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
