@@ -11,6 +11,7 @@ A potential outline for a presentation and paper.
   - 4. Open Data Sets (Kaggle)
   -- Describe Feature in dataset
   --https://www.kaggle.com/dansbecker/hospital-readmissions
+  --training.csv is including it repo for general use
 
 # Information Theory (IT) as a compliment to traditional measures:
   - 5. How does IT differ from parametric/non-parametric measures
