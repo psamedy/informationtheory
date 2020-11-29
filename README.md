@@ -9,10 +9,10 @@ Background:
 3. Electronic Medical Records - Diagnosis Codes (Amy)
 4. Open Data Sets (Kaggle) - Patrick
 
-Readmissions: Promise of Information Theory (IT) as a compliment to traditional measures
+Promise of Information Theory (IT) as a compliment to traditional measures:
 5. How does IT differ from parametric/non-parametric measures
 
-Analysis
+Analysis:
 6. EHR Example: Mutual Information
 7. Amy's Python output
 8. Kaggle Example: Conditional Entropy 
@@ -20,7 +20,7 @@ Analysis
 10. (Traditional) Logistic Regression:
 11 Significant Features
 
-Conclusion
+Conclusion:
 12.  Information Theory is a complimentary approach to feature selection
 
 
