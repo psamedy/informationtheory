@@ -4,12 +4,12 @@ This is a repo for exploring measures common to information theory and preparati
 A potential outline for a presentation and paper.
 
 # Background: 
-  - 1. Readmissions - Why is the an important measure in healthcare.
+  - 1. Readmissions - Why is this an important measure in healthcare.
   - 2. Potential Data Sources for exploratory analysis and prediction.
   - 3. Electronic Medical Records
-  -- Describe feature in dataset
+  -- Describe features in dataset
   - 4. Open Data Sets (Kaggle)
-  -- Describe Feature in dataset
+  -- Describe Features in dataset
   --https://www.kaggle.com/dansbecker/hospital-readmissions
   --training.csv is including it repo for general use
 
